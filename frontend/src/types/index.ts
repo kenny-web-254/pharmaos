@@ -9,14 +9,19 @@ export interface ApiResponse<T> {
 
 // Auth Types
 export interface User {
-  id: string;
+  _id: string;
+  id?: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  role: 'super_admin' | 'owner' | 'manager' | 'cashier' | 'staff' | 'pharmacist' | 'storekeeper' | 'branch_manager';
   avatar?: string;
-  organization?: Organization;
+  phone?: string;
+  organization: Organization;
   branch?: Branch;
+  permissions?: string[];
+  isActive: boolean;
+  lastLogin?: string;
 }
 
 // Organization Types
@@ -24,9 +29,10 @@ export interface Organization {
   _id: string;
   id?: string;
   name: string;
-  businessType: string;
+  businessType: 'pharmacy' | 'retail' | 'restaurant' | 'hardware' | 'beauty' | 'electronics' | 'warehouse' | 'clinic' | 'supermarket' | 'salon' | 'cafe';
   email: string;
   logo?: string;
+  owner: User;
   theme: {
     primaryColor: string;
     secondaryColor: string;
@@ -43,8 +49,12 @@ export interface Organization {
     dateFormat: string;
     taxType: string;
     taxRate: number;
+    enableInventory: boolean;
+    enablePOS: boolean;
+    enableOnline: boolean;
   };
   modules: Record<string, boolean>;
+  status: 'active' | 'inactive' | 'suspended';
 }
 
 // Branch Types
@@ -59,6 +69,7 @@ export interface Branch {
   phone: string;
   email: string;
   manager?: User;
+  organization: Organization;
   isActive: boolean;
 }
 
@@ -70,11 +81,12 @@ export interface Product {
   sku: string;
   barcode?: string;
   category?: ProductCategory;
+  supplier?: Supplier;
   quantity: number;
   minStockLevel: number;
   buyingPrice: number;
   sellingPrice: number;
-  unitType: string;
+  unitType: 'pieces' | 'kg' | 'liter' | 'meter' | 'box' | 'pack' | 'dozen';
   genericName?: string;
   strength?: string;
   dosageForm?: string;
@@ -84,6 +96,8 @@ export interface Product {
   margin: number;
   images?: string[];
   isActive: boolean;
+  organization: Organization;
+  branch?: Branch;
 }
 
 export interface ProductCategory {
@@ -109,6 +123,7 @@ export interface Customer {
   totalPurchases: number;
   notes?: string;
   isActive: boolean;
+  organization: Organization;
 }
 
 // Sale Types
@@ -126,6 +141,7 @@ export interface Sale {
   receiptNumber: string;
   items: SaleItem[];
   customer?: Customer;
+  branch?: Branch;
   subtotal: number;
   discount: number;
   tax: number;
@@ -176,4 +192,15 @@ export interface ChartData {
   name: string;
   value: number;
   [key: string]: any;
+}
+
+// Notification Types
+export interface Notification {
+  _id: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'error' | 'success';
+  isRead: boolean;
+  organization: Organization;
+  createdAt: string;
 }

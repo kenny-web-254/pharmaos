@@ -132,3 +132,100 @@ export const ALERT_TYPES = {
   SYSTEM: "system",
   USER: "user",
 };
+
+// Industry Modules
+export const INDUSTRY_MODULES = {
+  pharmacy: {
+    inventory: true,
+    pos: true,
+    prescriptions: true,
+    expiryTracking: true,
+    customers: true,
+    suppliers: true,
+  },
+  retail: {
+    inventory: true,
+    pos: true,
+    customers: true,
+    suppliers: true,
+    barcodeScanning: true,
+  },
+  restaurant: {
+    menu: true,
+    kitchen: true,
+    pos: true,
+    tables: true,
+    orders: true,
+  },
+  clinic: {
+    patients: true,
+    appointments: true,
+    prescriptions: true,
+    records: true,
+  },
+  beauty: {
+    appointments: true,
+    pos: true,
+    customers: true,
+    staff: true,
+  },
+};
+
+// Role Permissions Map
+export const ROLE_PERMISSIONS = {
+  super_admin: ['*'],
+  owner: [
+    'manage_organization',
+    'manage_users',
+    'manage_inventory',
+    'access_pos',
+    'create_sales',
+    'view_sales',
+    'void_sales',
+    'view_reports',
+    'export_reports',
+    'manage_settings',
+    'manage_branches',
+    'manage_customers',
+    'manage_suppliers',
+  ],
+  manager: [
+    'view_inventory',
+    'manage_inventory',
+    'access_pos',
+    'create_sales',
+    'view_sales',
+    'view_reports',
+    'manage_customers',
+    'manage_suppliers',
+  ],
+  cashier: [
+    'access_pos',
+    'create_sales',
+    'view_sales',
+  ],
+  staff: [
+    'view_inventory',
+    'view_sales',
+  ],
+  pharmacist: [
+    'manage_inventory',
+    'view_inventory',
+    'access_pos',
+    'create_sales',
+    'manage_prescriptions',
+  ],
+  storekeeper: [
+    'manage_inventory',
+    'view_inventory',
+    'manage_suppliers',
+  ],
+  branch_manager: [
+    'manage_inventory',
+    'access_pos',
+    'create_sales',
+    'view_sales',
+    'view_reports',
+    'manage_customers',
+  ],
+};

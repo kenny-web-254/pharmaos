@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Users, Package, AlertTriangle, DollarSign } from 'lucide-react';
+import { BarChart3, TrendingUp, Users, Package, AlertTriangle, DollarSign, ShoppingCart, Calendar } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useAuthStore } from '../store/authStore';
 import StatCard from '../components/StatCard';
 import Card from '../components/Card';
 
-// Mock data
 const chartData = [
   { name: 'Mon', sales: 4000, revenue: 2400 },
   { name: 'Tue', sales: 3000, revenue: 1398 },
@@ -17,7 +16,14 @@ const chartData = [
   { name: 'Sun', sales: 2390, revenue: 3800 },
 ];
 
-const COLORS = ['#10b981', '#06b6d4', '#f59e0b', '#ef4444'];
+const pieData = [
+  { name: 'Medicines', value: 45 },
+  { name: 'Supplements', value: 30 },
+  { name: 'Medical Devices', value: 15 },
+  { name: 'Other', value: 10 },
+];
+
+const COLORS = ['#10b981', '#06b6d4', '#0ea5e9', '#8b5cf6'];
 
 const DashboardPage = () => {
   const { organization } = useAuthStore();
@@ -46,7 +52,7 @@ const DashboardPage = () => {
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}>
         <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Dashboard</h1>
-        <p className="text-slate-600 dark:text-slate-400">Welcome back to {organization?.name}</p>
+        <p className="text-slate-600 dark:text-slate-400">Welcome back to <span className="gradient-text font-semibold">{organization?.name}</span></p>
       </motion.div>
 
       {/* Stats Grid */}
@@ -101,17 +107,24 @@ const DashboardPage = () => {
           transition={{ delay: 0.4 }}
           className="lg:col-span-2"
         >
-          <Card>
+          <Card glass>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Sales & Revenue</h2>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 183, 0.2)" />
+                <XAxis dataKey="name" stroke="#64748b" />
+                <YAxis stroke="#64748b" />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    border: '1px solid rgba(148, 163, 183, 0.3)',
+                    borderRadius: '12px',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                />
                 <Legend />
-                <Line type="monotone" dataKey="sales" stroke="#10b981" />
-                <Line type="monotone" dataKey="revenue" stroke="#06b6d4" />
+                <Line type="monotone" dataKey="sales" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="revenue" stroke="#06b6d4" strokeWidth={3} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </Card>
@@ -123,13 +136,21 @@ const DashboardPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
         >
-          <Card>
+          <Card glass>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Top Products</h2>
             <div className="space-y-3">
               {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="flex justify-between items-center p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
-                  <div className="text-sm font-medium text-slate-700 dark:text-slate-300">Product {i}</div>
-                  <div className="text-emerald-600 font-bold">${(i * 150).toFixed(2)}</div>
+                <div key={i} className="flex justify-between items-center p-2.5 rounded-lg hover:bg-white/50 dark:hover:bg-slate-800/50 transition-all">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-emerald flex items-center justify-center text-white text-xs font-bold">
+                      #{i}
+                    </div>
+                    <div>
+                      <p className="text-sm font-bold text-slate-900 dark:text-white">Product {i}</p>
+                      <p className="text-xs text-slate-500">250 sold</p>
+                    </div>
+                  </div>
+                  <p className="text-emerald-600 font-bold">${(i * 150).toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -144,16 +165,19 @@ const DashboardPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <Card>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Recent Sales</h2>
+          <Card glass>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <ShoppingCart className="text-emerald-600" />
+              Recent Sales
+            </h2>
             <div className="space-y-3">
               {recentSales.map((sale) => (
-                <div key={sale.id} className="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                <div key={sale.id} className="flex justify-between items-center p-3 glass rounded-lg">
                   <div>
                     <p className="font-medium text-slate-900 dark:text-white">{sale.customer}</p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">{sale.time}</p>
                   </div>
-                  <p className="font-bold text-emerald-600">${sale.amount.toFixed( 2)}</p>
+                  <p className="font-bold text-emerald-600">${sale.amount.toFixed(2)}</p>
                 </div>
               ))}
             </div>
@@ -166,14 +190,14 @@ const DashboardPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
         >
-          <Card>
+          <Card glass>
             <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
               <AlertTriangle className="text-yellow-600" />
               Low Stock Alert
             </h2>
             <div className="space-y-3">
               {lowStockItems.map((item) => (
-                <div key={item.id} className="p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <div key={item.id} className="p-3 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-yellow-200/50 dark:border-yellow-800/50 rounded-lg">
                   <div className="flex justify-between items-start">
                     <div>
                       <p className="font-medium text-slate-900 dark:text-white">{item.name}</p>
@@ -182,8 +206,8 @@ const DashboardPage = () => {
                       </p>
                     </div>
                     <div className="text-right">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center bg-yellow-200 dark:bg-yellow-800">
-                        <span className="text-sm font-bold text-yellow-900">{Math.round((item.stock / item.threshold) * 100)}%</span>
+                      <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-200 to-amber-200 dark:from-yellow-800 dark:to-amber-800 shadow-inner">
+                        <span className="text-sm font-bold text-yellow-900 dark:text-yellow-100">{Math.round((item.stock / item.threshold) * 100)}%</span>
                       </div>
                     </div>
                   </div>

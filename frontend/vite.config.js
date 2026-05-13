@@ -18,13 +18,13 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: 'logo-192.png',
+            src: 'pwa-192x192.png',
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any',
           },
           {
-            src: 'logo-512.png',
+            src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable any',
@@ -39,13 +39,40 @@ export default defineConfig({
           },
         ],
         categories: ['business', 'productivity'],
+        prefer_related_applications: false,
+        shortcuts: [
+          {
+            name: 'Dashboard',
+            short_name: 'Dashboard',
+            description: 'View your business dashboard',
+            url: '/dashboard?shortcut=dashboard',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+          },
+          {
+            name: 'POS',
+            short_name: 'POS',
+            description: 'Quick access to Point of Sale',
+            url: '/pos?shortcut=pos',
+            icons: [{ src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' }],
+          },
+        ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         maximumFileSizeToCacheInBytes: 5000000,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\.nexacore\.com\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: { numEntries: 100, maxAgeSeconds: 60 * 60 * 24 },
+            },
+          },
+        ],
       },
       devOptions: {
-        enabled: false,
+        enabled: true,
       },
     }),
   ],

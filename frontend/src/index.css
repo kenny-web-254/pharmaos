@@ -11,7 +11,7 @@ html {
 }
 
 body {
-  @apply bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-950 dark:to-slate-900;
+  @apply bg-gradient-to-br from-slate-50 via-white to-emerald-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20;
 }
 
 ::-webkit-scrollbar {
@@ -32,27 +32,51 @@ body {
 }
 
 .glass {
-  @apply backdrop-blur-lg bg-white/30 dark:bg-slate-900/30 border border-white/20;
+  @apply backdrop-blur-xl bg-white/40 dark:bg-slate-900/40 border border-white/30 dark:border-slate-700/50 shadow-glass;
+}
+
+.glass-card {
+  @apply backdrop-blur-xl bg-white/50 dark:bg-slate-900/50 border border-white/30 dark:border-slate-700/50 shadow-premium;
+}
+
+.glass-dark {
+  @apply backdrop-blur-xl bg-slate-900/60 border border-slate-700/50;
 }
 
 .gradient-text {
   @apply bg-gradient-emerald bg-clip-text text-transparent;
 }
 
+.gradient-teal-text {
+  @apply bg-gradient-teal bg-clip-text text-transparent;
+}
+
 .card {
-  @apply rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300;
+  @apply rounded-xl border border-slate-200/50 dark:border-slate-700/50 shadow-sm hover:shadow-md transition-all duration-300 bg-white/80 dark:bg-slate-900/80;
+}
+
+.card-glass {
+  @apply rounded-2xl border border-white/30 dark:border-slate-700/50 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl shadow-glass;
 }
 
 .btn-primary {
-  @apply px-4 py-2 rounded-lg bg-emerald-500 text-white hover:bg-emerald-600 transition-colors duration-200 font-medium;
+  @apply px-4 py-2 rounded-lg bg-gradient-emerald text-white hover:shadow-glow transition-all duration-300 font-medium;
 }
 
 .btn-secondary {
   @apply px-4 py-2 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors duration-200 font-medium;
 }
 
+.btn-outline {
+  @apply px-4 py-2 rounded-lg border border-emerald-500 text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 transition-all duration-200 font-medium;
+}
+
 .input-field {
-  @apply w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500;
+  @apply w-full px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent;
+}
+
+.input-glass {
+  @apply w-full px-4 py-2 rounded-lg border border-white/30 dark:border-slate-600/50 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500;
 }
 
 .skeleton {
@@ -61,11 +85,11 @@ body {
 
 @layer components {
   .sidebar-item {
-    @apply px-4 py-3 rounded-lg transition-all duration-200 flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:bg-emerald-50 dark:hover:bg-slate-800 hover:text-emerald-600 dark:hover:text-emerald-400;
+    @apply px-4 py-3 rounded-lg transition-all duration-200 flex items-center gap-3 text-slate-600 dark:text-slate-300 hover:bg-emerald-50/50 dark:hover:bg-slate-800/50 hover:text-emerald-600 dark:hover:text-emerald-400;
   }
 
   .sidebar-item.active {
-    @apply bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 font-medium;
+    @apply bg-gradient-to-r from-emerald-100 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/20 text-emerald-600 dark:text-emerald-400 font-medium shadow-sm;
   }
 
   .stat-card {
@@ -74,5 +98,17 @@ body {
 
   .badge-small {
     @apply inline-block px-2 py-1 rounded-full text-xs font-medium;
+  }
+
+  .badge-success {
+    @apply inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400;
+  }
+
+  .badge-warning {
+    @apply inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400;
+  }
+
+  .badge-error {
+    @apply inline-block px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400;
   }
 }

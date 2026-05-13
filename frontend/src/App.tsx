@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import MainLayout from './components/layouts/MainLayout';
+import OnboardingPage from './pages/OnboardingPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Pages
 import LoginPage from './pages/LoginPage';
@@ -13,12 +15,12 @@ import ReportsPage from './pages/ReportsPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ element }: { element: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
   return isAuthenticated ? element : <Navigate to="/login" />;
 };
 
 const App = () => {
-  const { loadFromStorage } = useAuthStore();
+  const { loadFromStorage, isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     loadFromStorage();
@@ -33,6 +35,7 @@ const App = () => {
       <Routes>
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
 
         {/* Protected Routes */}
         <Route element={<MainLayout />}>
@@ -41,6 +44,7 @@ const App = () => {
           <Route path="/pos" element={<ProtectedRoute element={<POSPage />} />} />
           <Route path="/customers" element={<ProtectedRoute element={<CustomersPage />} />} />
           <Route path="/reports" element={<ProtectedRoute element={<ReportsPage />} />} />
+          <Route path="/notifications" element={<ProtectedRoute element={<NotificationsPage />} />} />
         </Route>
 
         {/* Default Redirect */}

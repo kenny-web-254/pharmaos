@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, Download, Filter } from 'lucide-react';
+import { BarChart3, Download, Filter, TrendingUp, DollarSign, ShoppingCart, Users } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from 'recharts';
 import Card from '../components/Card';
 import Button from '../components/Button';
+import StatCard from '../components/StatCard';
 
 const ReportsPage = () => {
   const [reportType, setReportType] = useState('sales');
@@ -46,7 +47,7 @@ const ReportsPage = () => {
         <select
           value={reportType}
           onChange={(e) => setReportType(e.target.value)}
-          className="input-field py-2"
+          className="input-field py-2.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl"
         >
           <option value="sales">Sales Report</option>
           <option value="revenue">Revenue Report</option>
@@ -57,7 +58,7 @@ const ReportsPage = () => {
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value)}
-          className="input-field py-2"
+          className="input-field py-2.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-xl"
         >
           <option value="week">This Week</option>
           <option value="month">This Month</option>
@@ -65,12 +66,12 @@ const ReportsPage = () => {
           <option value="year">This Year</option>
         </select>
 
-        <Button variant="secondary">
-          <Filter size={18} className="mr-2" /> More Filters
+        <Button variant="outline">
+          <Filter className="w-4 h-4 mr-2" /> More Filters
         </Button>
 
         <Button variant="primary" className="ml-auto">
-          <Download size={18} className="mr-2" /> Export PDF
+          <Download className="w-4 h-4 mr-2" /> Export PDF
         </Button>
       </motion.div>
 
@@ -81,27 +82,18 @@ const ReportsPage = () => {
         transition={{ staggerChildren: 0.1, delay: 0.2 }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
-        {[
-          { label: 'Total Revenue', value: '$125,430', trend: '+12.5%' },
-          { label: 'Total Sales', value: '342', trend: '+8.2%' },
-          { label: 'Avg Order Value', value: '$366.47', trend: '+3.1%' },
-          { label: 'Growth Rate', value: '15.3%', trend: '+2.1%' },
-        ].map((stat, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-          >
-            <Card>
-              <p className="text-slate-600 dark:text-slate-400 text-sm mb-2">{stat.label}</p>
-              <div className="flex justify-between items-baseline">
-                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</p>
-                <p className="text-emerald-600 text-sm font-semibold">{stat.trend}</p>
-              </div>
-            </Card>
-          </motion.div>
-        ))}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+          <StatCard icon={<DollarSign />} label="Total Revenue" value="$125,430" trend={12.5} color="emerald" />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <StatCard icon={<ShoppingCart />} label="Total Sales" value="342" trend={8.2} color="teal" />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <StatCard icon={<BarChart3 />} label="Avg Order" value="$366.47" trend={3.1} color="blue" />
+        </motion.div>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <StatCard icon={<TrendingUp />} label="Growth Rate" value="15.3%" trend={2.1} color="purple" />
+        </motion.div>
       </motion.div>
 
       {/* Charts */}
@@ -109,39 +101,53 @@ const ReportsPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6"
       >
-        <Card>
+        <Card glass>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Sales Trend</h2>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={salesData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 183, 0.2)" />
+              <XAxis dataKey="date" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid rgba(148, 163, 183, 0.3)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)'
+                }}
+              />
               <Legend />
-              <Line type="monotone" dataKey="sales" stroke="#10b981" />
-              <Line type="monotone" dataKey="revenue" stroke="#06b6d4" />
+              <Line type="monotone" dataKey="sales" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="revenue" stroke="#06b6d4" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </Card>
-      </motion.div>
 
-      {/* Category Breakdown */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <Card>
+        <Card glass>
           <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Sales by Category</h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={categoryData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="category" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 183, 0.2)" />
+              <XAxis dataKey="category" stroke="#64748b" />
+              <YAxis stroke="#64748b" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                  border: '1px solid rgba(148, 163, 183, 0.3)',
+                  borderRadius: '12px',
+                  backdropFilter: 'blur(10px)'
+                }}
+              />
               <Legend />
-              <Bar dataKey="sales" fill="#10b981" />
+              <Bar dataKey="sales" fill="url(#gradient)" radius={[4, 4, 0, 0]} />
+              <defs>
+                <linearGradient id="gradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#10b981" />
+                  <stop offset="100%" stopColor="#06b6d4" />
+                </linearGradient>
+              </defs>
             </BarChart>
           </ResponsiveContainer>
         </Card>

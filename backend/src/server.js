@@ -2,15 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import connectDB from './src/config/database.js';
-import { errorMiddleware, notFound } from './src/middleware/errorMiddleware.js';
+import connectDB from './config/database.js';
+import { errorMiddleware, notFound } from './middleware/errorMiddleware.js';
 
 // Routes
-import authRoutes from './src/routes/authRoutes.js';
-import organizationRoutes from './src/routes/organizationRoutes.js';
-import productRoutes from './src/routes/productRoutes.js';
-import saleRoutes from './src/routes/saleRoutes.js';
-import customerSupplierRoutes from './src/routes/customerSupplierRoutes.js';
+import authRoutes from './routes/authRoutes.js';
+import organizationRoutes from './routes/organizationRoutes.js';
+import productRoutes from './routes/productRoutes.js';
+import saleRoutes from './routes/saleRoutes.js';
+import customerSupplierRoutes from './routes/customerSupplierRoutes.js';
 
 dotenv.config();
 
