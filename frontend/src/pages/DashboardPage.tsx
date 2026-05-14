@@ -10,7 +10,6 @@ import { useCurrency } from '../hooks/useAuth';
 import { salesService, customerService, productService, organizationService } from '../services/api';
 import toast from 'react-hot-toast';
 import { Branch } from '../types';
-import { Branch } from '../types';
 
 const chartData = [
   { name: 'Mon', sales: 4000, revenue: 312000 },

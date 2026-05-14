@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useAuthStore } from './store/authStore';
 import MainLayout from './components/layouts/MainLayout';
 import OnboardingPage from './pages/OnboardingPage';
-import NotificationsPage from './pages/NotificationsPage';
 
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';

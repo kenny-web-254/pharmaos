@@ -7,9 +7,6 @@ import Card from '../components/Card';
 import { useAuthStore } from '../store/authStore';
 import { organizationService } from '../services/api';
 import toast from 'react-hot-toast';
-import { useAuthStore } from '../store/authStore';
-import { organizationService } from '../services/api';
-import toast from 'react-hot-toast';
 
 const OnboardingPage = () => {
   const [step, setStep] = useState(1);
