@@ -5,13 +5,16 @@ import MainLayout from './components/layouts/MainLayout';
 import OnboardingPage from './pages/OnboardingPage';
 import NotificationsPage from './pages/NotificationsPage';
 
-// Pages
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
 import InventoryPage from './pages/InventoryPage';
 import POSPage from './pages/POSPage';
 import CustomersPage from './pages/CustomersPage';
+import SuppliersPage from './pages/SuppliersPage';
 import ReportsPage from './pages/ReportsPage';
+import SettingsPage from './pages/SettingsPage';
+import NotificationsPage from './pages/NotificationsPage';
 
 // Protected Route Component
 const ProtectedRoute = ({ element }: { element: React.ReactNode }) => {
@@ -35,6 +38,7 @@ const App = () => {
       <Routes>
         {/* Auth Routes */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
 
         {/* Protected Routes */}
@@ -43,8 +47,10 @@ const App = () => {
           <Route path="/inventory" element={<ProtectedRoute element={<InventoryPage />} />} />
           <Route path="/pos" element={<ProtectedRoute element={<POSPage />} />} />
           <Route path="/customers" element={<ProtectedRoute element={<CustomersPage />} />} />
+          <Route path="/suppliers" element={<ProtectedRoute element={<SuppliersPage />} />} />
           <Route path="/reports" element={<ProtectedRoute element={<ReportsPage />} />} />
           <Route path="/notifications" element={<ProtectedRoute element={<NotificationsPage />} />} />
+          <Route path="/settings" element={<ProtectedRoute element={<SettingsPage />} />} />
         </Route>
 
         {/* Default Redirect */}

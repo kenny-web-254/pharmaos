@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
-const Sidebar = () => {
+const Sidebar = ({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; setMobileOpen?: (v: boolean) => void }) => {
   const [isOpen, setIsOpen] = useState(true);
   const location = useLocation();
   const { logout, organization } = useAuthStore();
@@ -34,13 +34,20 @@ const Sidebar = () => {
   ];
 
   return (
-    <motion.aside
-      initial={{ x: -250 }}
-      animate={{ x: 0 }}
-      className={`${
-        isOpen ? 'w-64' : 'w-20'
-      } glass-card rounded-r-3xl m-3 flex flex-col shadow-premium overflow-hidden`}
-    >
+    <>
+      {/* Mobile backdrop */}
+      <div
+        onClick={() => setMobileOpen?.(false)}
+        className={`fixed inset-0 bg-black/40 z-40 lg:hidden ${mobileOpen ? 'block' : 'hidden'}`}
+      />
+
+      <motion.aside
+        initial={{ x: -250 }}
+        animate={{ x: 0 }}
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 lg:relative lg:translate-x-0 ${
+          mobileOpen ? 'translate-x-0' : '-translate-x-full'
+        } ${isOpen ? 'lg:w-64' : 'lg:w-20'} glass-card rounded-r-3xl m-3 flex flex-col shadow-premium overflow-hidden`}
+      >
       {/* Logo */}
       <div className="p-6 flex items-center justify-between border-b border-white/30 dark:border-slate-700/50">
         {isOpen && (
@@ -53,12 +60,23 @@ const Sidebar = () => {
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{organization?.name}</p>
           </motion.div>
         )}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="p-2 glass rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
-        >
-          {isOpen ? <X className="w-4 h-4 text-slate-700 dark:text-slate-300" /> : <Menu className="w-4 h-4 text-slate-700 dark:text-slate-300" />}
-        </button>
+        <div className="flex items-center gap-2">
+          {/* Mobile close button */}
+          <button
+            onClick={() => setMobileOpen?.(false)}
+            className="lg:hidden p-2 glass rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
+          >
+            <X className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+          </button>
+
+          {/* Desktop collapse button */}
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="hidden lg:inline-flex p-2 glass rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
+          >
+            {isOpen ? <X className="w-4 h-4 text-slate-700 dark:text-slate-300" /> : <Menu className="w-4 h-4 text-slate-700 dark:text-slate-300" />}
+          </button>
+        </div>
       </div>
 
       {/* Menu Items */}

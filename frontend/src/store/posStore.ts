@@ -56,18 +56,19 @@ export const usePosStore = create<PosStore>((set, get) => ({
   setPaymentMethod: (method) => set({ paymentMethod: method }),
   setSelectedCustomer: (customer) => set({ selectedCustomer: customer }),
 
-  getCartTotal: () => {
-    const state = get();
-    let total = state.cart.reduce(
-      (sum, item) =>
-        sum +
-        item.product.sellingPrice * item.quantity -
-        (item.discountPercent || 0),
-      0
-    );
-    total -= state.discount;
-    return Math.max(0, total);
-  },
+   getCartTotal: () => {
+     const state = get();
+     let total = state.cart.reduce(
+       (sum, item) => {
+         const lineTotal = item.product.sellingPrice * item.quantity;
+         const itemDiscount = item.discountPercent ? lineTotal * (item.discountPercent / 100) : 0;
+         return sum + (lineTotal - itemDiscount);
+       },
+       0
+     );
+     total -= state.discount;
+     return Math.max(0, total);
+   },
 
   clearCart: () =>
     set({ cart: [], discount: 0, paymentMethod: 'cash', selectedCustomer: null }),

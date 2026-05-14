@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight, Store, User, Palette, CreditCard, Check } from 'lucide-react';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import { useAuthStore } from '../store/authStore';
+import { organizationService } from '../services/api';
+import toast from 'react-hot-toast';
+import { useAuthStore } from '../store/authStore';
+import { organizationService } from '../services/api';
+import toast from 'react-hot-toast';
 
 const OnboardingPage = () => {
   const [step, setStep] = useState(1);
   const [businessType, setBusinessType] = useState('');
   const [orgName, setOrgName] = useState('');
+  const [selectedColor, setSelectedColor] = useState('emerald');
+  const navigate = useNavigate();
+  const { organization, setOrganization } = useAuthStore();
 
   const businessTypes = [
     { id: 'pharmacy', name: 'Pharmacy', icon: '💊', color: 'emerald' },
@@ -17,6 +27,36 @@ const OnboardingPage = () => {
     { id: 'beauty', name: 'Beauty Salon', icon: '💄', color: 'pink' },
     { id: 'electronics', name: 'Electronics', icon: '📱', color: 'purple' },
   ];
+
+  const colors = [
+    { id: 'emerald', classes: 'bg-emerald-500 hover:bg-emerald-600' },
+    { id: 'teal', classes: 'bg-teal-500 hover:bg-teal-600' },
+    { id: 'blue', classes: 'bg-blue-500 hover:bg-blue-600' },
+    { id: 'purple', classes: 'bg-purple-500 hover:bg-purple-600' },
+    { id: 'pink', classes: 'bg-pink-500 hover:bg-pink-600' },
+    { id: 'orange', classes: 'bg-orange-500 hover:bg-orange-600' },
+  ];
+
+  const handleComplete = async () => {
+    if (!organization) {
+      navigate('/dashboard');
+      return;
+    }
+
+    try {
+      await organizationService.updateSettings(organization._id, {
+        name: orgName || organization.name,
+        businessType: businessType || organization.businessType,
+        theme: { primaryColor: selectedColor, secondaryColor: 'teal' },
+      });
+      toast.success('Organization setup complete!');
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Setup error:', error);
+      toast.error('Setup failed, but continuing...');
+      navigate('/dashboard');
+    }
+  };
 
   const renderStep1 = () => (
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
@@ -45,22 +85,22 @@ const OnboardingPage = () => {
       <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">What type of business?</h2>
       <p className="text-slate-600 dark:text-slate-400 mb-6">Select the option that best describes your business</p>
       
-      <div className="grid grid-cols-2 gap-3">
-        {businessTypes.map((type) => (
-          <button
-            key={type.id}
-            onClick={() => setBusinessType(type.id)}
-            className={`p-4 glass rounded-xl text-center transition-all ${
-              businessType === type.id 
-                ? `ring-2 ring-${type.color}-500 bg-gradient-to-br from-${type.color}-50 to-${type.color}-100` 
-                : 'hover:bg-white/60'
-            }`}
-          >
-            <div className="text-3xl mb-2">{type.icon}</div>
-            <p className="font-medium text-slate-900 dark:text-white">{type.name}</p>
-          </button>
-        ))}
-      </div>
+        <div className="grid grid-cols-2 gap-3">
+          {businessTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => setBusinessType(type.id)}
+              className={`p-4 glass rounded-xl text-center transition-all ${
+                businessType === type.id
+                  ? `ring-2 ring-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/30 dark:to-emerald-900/20`
+                  : 'hover:bg-white/60'
+              }`}
+            >
+              <div className="text-3xl mb-2">{type.icon}</div>
+              <p className="font-medium text-slate-900 dark:text-white">{type.name}</p>
+            </button>
+          ))}
+        </div>
     </motion.div>
   );
 
@@ -68,12 +108,13 @@ const OnboardingPage = () => {
     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}>
       <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">Choose your theme</h2>
       <p className="text-slate-600 dark:text-slate-400 mb-6">Select your preferred color scheme</p>
-      
+
       <div className="grid grid-cols-3 gap-4">
-        {['emerald', 'teal', 'blue', 'purple', 'pink', 'orange'].map((color) => (
+        {colors.map((color) => (
           <button
-            key={color}
-            className={`p-4 rounded-xl bg-${color}-500 hover:scale-105 transition-transform`}
+            key={color.id}
+            onClick={() => setSelectedColor(color.id)}
+            className={`p-4 rounded-xl transition-all ${selectedColor === color.id ? 'ring-2 ring-offset-2 ring-emerald-500 scale-105' : ''} ${color.classes}`}
           />
         ))}
       </div>
@@ -125,8 +166,14 @@ const OnboardingPage = () => {
             Back
           </button>
           
-          <Button 
-            onClick={() => step < 4 ? setStep(step + 1) : console.log('Complete')}
+          <Button
+            onClick={() => {
+              if (step < 4) {
+                setStep(step + 1);
+              } else {
+                handleComplete();
+              }
+            }}
             disabled={step === 2 && !businessType}
           >
             {step === 4 ? 'Go to Dashboard' : 'Continue'}

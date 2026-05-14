@@ -17,7 +17,7 @@ export const useLocalStorage = (key: string, initialValue: any = null) => {
 };
 
 export const useCurrency = () => {
-  const currency = localStorage.getItem('currency') || 'USD';
+  const currency = localStorage.getItem('currency') || 'KES';
   return { currency };
 };
 

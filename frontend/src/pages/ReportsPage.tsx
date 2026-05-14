@@ -5,25 +5,46 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsive
 import Card from '../components/Card';
 import Button from '../components/Button';
 import StatCard from '../components/StatCard';
+import formatCurrency from '../services/currencyService';
+import { useCurrency } from '../hooks/useAuth';
+import toast from 'react-hot-toast';
 
 const ReportsPage = () => {
   const [reportType, setReportType] = useState('sales');
   const [dateRange, setDateRange] = useState('month');
+  const [loading, setLoading] = useState(false);
+  const { currency } = useCurrency();
+
+  const handleExport = async () => {
+    setLoading(true);
+    try {
+      // TODO: Implement actual PDF export
+      toast.success('Report exported successfully!');
+    } catch (error) {
+      toast.error('Export failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMoreFilters = () => {
+    toast('Advanced filters coming soon!', { icon: '🔍' });
+  };
 
   const salesData = [
-    { date: '2024-01-01', sales: 4500, revenue: 28000 },
-    { date: '2024-01-02', sales: 3200, revenue: 19800 },
-    { date: '2024-01-03', sales: 5100, revenue: 31500 },
-    { date: '2024-01-04', sales: 4800, revenue: 29600 },
-    { date: '2024-01-05', sales: 6200, revenue: 38100 },
-    { date: '2024-01-06', sales: 5900, revenue: 36400 },
+    { date: '2024-01-01', sales: 4500, revenue: 3640000 },
+    { date: '2024-01-02', sales: 3200, revenue: 2574000 },
+    { date: '2024-01-03', sales: 5100, revenue: 4095000 },
+    { date: '2024-01-04', sales: 4800, revenue: 3848000 },
+    { date: '2024-01-05', sales: 6200, revenue: 4953000 },
+    { date: '2024-01-06', sales: 5900, revenue: 4732000 },
   ];
 
   const categoryData = [
-    { category: 'Medicines', sales: 45000, margin: '35%' },
-    { category: 'Supplements', sales: 28000, margin: '42%' },
-    { category: 'Medical Devices', sales: 15000, margin: '28%' },
-    { category: 'Other', sales: 12000, margin: '38%' },
+    { category: 'Medicines', sales: 5850000, margin: '35%' },
+    { category: 'Supplements', sales: 3640000, margin: '42%' },
+    { category: 'Medical Devices', sales: 1950000, margin: '28%' },
+    { category: 'Other', sales: 1560000, margin: '38%' },
   ];
 
   return (
@@ -66,11 +87,11 @@ const ReportsPage = () => {
           <option value="year">This Year</option>
         </select>
 
-        <Button variant="outline">
+        <Button variant="outline" onClick={handleMoreFilters}>
           <Filter className="w-4 h-4 mr-2" /> More Filters
         </Button>
 
-        <Button variant="primary" className="ml-auto">
+        <Button variant="primary" className="ml-auto" onClick={handleExport} loading={loading}>
           <Download className="w-4 h-4 mr-2" /> Export PDF
         </Button>
       </motion.div>
@@ -83,13 +104,13 @@ const ReportsPage = () => {
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-          <StatCard icon={<DollarSign />} label="Total Revenue" value="$125,430" trend={12.5} color="emerald" />
+          <StatCard icon={<DollarSign />} label="Total Revenue" value={formatCurrency(16305900, currency)} trend={12.5} color="emerald" />
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <StatCard icon={<ShoppingCart />} label="Total Sales" value="342" trend={8.2} color="teal" />
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <StatCard icon={<BarChart3 />} label="Avg Order" value="$366.47" trend={3.1} color="blue" />
+          <StatCard icon={<BarChart3 />} label="Avg Order" value={formatCurrency(47641, currency)} trend={3.1} color="blue" />
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <StatCard icon={<TrendingUp />} label="Growth Rate" value="15.3%" trend={2.1} color="purple" />

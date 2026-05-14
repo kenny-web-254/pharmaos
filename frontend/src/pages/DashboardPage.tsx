@@ -1,51 +1,127 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { BarChart3, TrendingUp, Users, Package, AlertTriangle, DollarSign, ShoppingCart, Calendar } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { BarChart3, TrendingUp, Users, Package, AlertTriangle, DollarSign, ShoppingCart } from 'lucide-react';
+import { LineChart, Line, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuthStore } from '../store/authStore';
 import StatCard from '../components/StatCard';
 import Card from '../components/Card';
+import formatCurrency from '../services/currencyService';
+import { useCurrency } from '../hooks/useAuth';
+import { salesService, customerService, productService, organizationService } from '../services/api';
+import toast from 'react-hot-toast';
+import { Branch } from '../types';
+import { Branch } from '../types';
 
 const chartData = [
-  { name: 'Mon', sales: 4000, revenue: 2400 },
-  { name: 'Tue', sales: 3000, revenue: 1398 },
-  { name: 'Wed', sales: 3500, revenue: 9800 },
-  { name: 'Thu', sales: 4200, revenue: 3908 },
-  { name: 'Fri', sales: 2780, revenue: 9800 },
-  { name: 'Sat', sales: 1890, revenue: 4300 },
-  { name: 'Sun', sales: 2390, revenue: 3800 },
+  { name: 'Mon', sales: 4000, revenue: 312000 },
+  { name: 'Tue', sales: 3000, revenue: 181740 },
+  { name: 'Wed', sales: 3500, revenue: 1274000 },
+  { name: 'Thu', sales: 4200, revenue: 508040 },
+  { name: 'Fri', sales: 2780, revenue: 1274000 },
+  { name: 'Sat', sales: 1890, revenue: 559000 },
+  { name: 'Sun', sales: 2390, revenue: 494000 },
 ];
-
-const pieData = [
-  { name: 'Medicines', value: 45 },
-  { name: 'Supplements', value: 30 },
-  { name: 'Medical Devices', value: 15 },
-  { name: 'Other', value: 10 },
-];
-
-const COLORS = ['#10b981', '#06b6d4', '#0ea5e9', '#8b5cf6'];
 
 const DashboardPage = () => {
-  const { organization } = useAuthStore();
-  const [stats] = useState({
-    totalRevenue: 125430,
-    totalSales: 342,
-    totalCustomers: 156,
-    lowStockProducts: 12,
+  const { organization, selectedBranch } = useAuthStore();
+  const { currency } = useCurrency();
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalSales: 0,
+    totalCustomers: 0,
+    lowStockProducts: 0,
   });
+  const [recentSales, setRecentSales] = useState<any[]>([]);
+  const [lowStockItems, setLowStockItems] = useState<any[]>([]);
 
-  const recentSales = [
-    { id: 1, customer: 'John Smith', amount: 250.50, time: '2 hours ago' },
-    { id: 2, customer: 'Emma Wilson', amount: 125.00, time: '4 hours ago' },
-    { id: 3, customer: 'David Brown', amount: 450.75, time: '6 hours ago' },
-    { id: 4, customer: 'Sarah Davis', amount: 85.25, time: '1 day ago' },
-  ];
+  useEffect(() => {
+    if (!organization || !selectedBranch) return;
+    fetchDashboardData();
+  }, [organization, selectedBranch]);
 
-  const lowStockItems = [
-    { id: 1, name: 'Ibuprofen 200mg', stock: 8, threshold: 20 },
-    { id: 2, name: 'Paracetamol 500mg', stock: 5, threshold: 15 },
-    { id: 3, name: 'Cough Syrup', stock: 3, threshold: 10 },
-  ];
+  // Ensure at least one branch exists
+  useEffect(() => {
+    const ensureBranch = async () => {
+      if (!organization) return;
+      try {
+        const branchesRes = await organizationService.getBranches(organization._id);
+        if (branchesRes.data.branches.length === 0) {
+          // Create a default main branch
+          const defaultBranch = {
+            name: 'Main Branch',
+            address: 'Headquarters',
+            city: 'Nairobi',
+            state: 'Nairobi',
+            postalCode: '00100',
+            country: 'Kenya',
+            phone: '+254-700-000-000',
+            email: organization.email,
+          };
+          const createRes = await organizationService.createBranch(organization._id, defaultBranch);
+          const newBranch = createRes.data.branch as Branch;
+          // Set as selected branch
+          useAuthStore.getState().setSelectedBranch(newBranch);
+          toast.success('Default branch created');
+        }
+      } catch (error) {
+        console.error('Branch check failed:', error);
+      }
+    };
+    ensureBranch();
+  }, [organization]);
+
+  const fetchDashboardData = async () => {
+    if (!organization || !selectedBranch) return;
+    setLoading(true);
+    try {
+      // Fetch customers count
+      const customersRes = await customerService.getCustomers(organization._id, 1, 1);
+      const totalCustomers = customersRes.data.pagination.total;
+
+      // Fetch low stock products
+      const lowStockRes = await productService.getLowStockProducts(organization._id);
+      const lowStockProductsArray = lowStockRes.data.products;
+
+      // Fetch sales history
+      const salesRes = await salesService.getSalesHistory(organization._id, selectedBranch._id, 1, 50);
+      const sales = salesRes.data.sales;
+      const totalRevenue = sales.reduce((sum: number, s: any) => sum + s.total, 0);
+
+      // Get recent sales (last 4)
+      const recent = sales
+        .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 4)
+        .map((s: any) => ({
+          id: s._id,
+          customer: s.customer ? `${s.customer.firstName} ${s.customer.lastName}` : 'Walk-in Customer',
+          amount: s.total,
+          time: new Date(s.createdAt).toLocaleString(),
+        }));
+
+      // Low stock items details
+      const lowStockItemsList = lowStockProductsArray.slice(0, 3).map((p: any) => ({
+        id: p._id,
+        name: p.name,
+        stock: p.quantity,
+        threshold: p.minStockLevel,
+      }));
+
+      setStats({
+        totalRevenue,
+        totalSales: salesRes.data.pagination.total,
+        totalCustomers,
+        lowStockProducts: lowStockProductsArray.length,
+      });
+      setRecentSales(recent);
+      setLowStockItems(lowStockItemsList);
+    } catch (error: any) {
+      console.error('Dashboard fetch error:', error);
+      toast.error('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -66,7 +142,7 @@ const DashboardPage = () => {
           <StatCard
             icon={<DollarSign size={24} />}
             label="Total Revenue"
-            value={`$${stats.totalRevenue.toLocaleString()}`}
+            value={formatCurrency(stats.totalRevenue, currency)}
             trend={12.5}
             color="emerald"
           />
@@ -114,8 +190,8 @@ const DashboardPage = () => {
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(148, 163, 183, 0.2)" />
                 <XAxis dataKey="name" stroke="#64748b" />
                 <YAxis stroke="#64748b" />
-                <Tooltip 
-                  contentStyle={{ 
+                <Tooltip
+                  contentStyle={{
                     backgroundColor: 'rgba(255, 255, 255, 0.9)',
                     border: '1px solid rgba(148, 163, 183, 0.3)',
                     borderRadius: '12px',
@@ -150,7 +226,7 @@ const DashboardPage = () => {
                       <p className="text-xs text-slate-500">250 sold</p>
                     </div>
                   </div>
-                  <p className="text-emerald-600 font-bold">${(i * 150).toFixed(2)}</p>
+                  <p className="text-emerald-600 font-bold text-sm">{formatCurrency(i * 19500, currency)}</p>
                 </div>
               ))}
             </div>
@@ -171,15 +247,19 @@ const DashboardPage = () => {
               Recent Sales
             </h2>
             <div className="space-y-3">
-              {recentSales.map((sale) => (
-                <div key={sale.id} className="flex justify-between items-center p-3 glass rounded-lg">
-                  <div>
-                    <p className="font-medium text-slate-900 dark:text-white">{sale.customer}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{sale.time}</p>
+              {recentSales.length === 0 ? (
+                <p className="text-center text-slate-500 py-8">No recent sales</p>
+              ) : (
+                recentSales.map((sale) => (
+                  <div key={sale.id} className="flex justify-between items-center p-3 glass rounded-lg">
+                    <div>
+                      <p className="font-medium text-slate-900 dark:text-white">{sale.customer}</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{sale.time}</p>
+                    </div>
+                    <p className="font-bold text-emerald-600 text-sm">{formatCurrency(sale.amount, currency)}</p>
                   </div>
-                  <p className="font-bold text-emerald-600">${sale.amount.toFixed(2)}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
         </motion.div>
@@ -196,23 +276,27 @@ const DashboardPage = () => {
               Low Stock Alert
             </h2>
             <div className="space-y-3">
-              {lowStockItems.map((item) => (
-                <div key={item.id} className="p-3 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-yellow-200/50 dark:border-yellow-800/50 rounded-lg">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium text-slate-900 dark:text-white">{item.name}</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
-                        {item.stock} left (threshold: {item.threshold})
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-200 to-amber-200 dark:from-yellow-800 dark:to-amber-800 shadow-inner">
-                        <span className="text-sm font-bold text-yellow-900 dark:text-yellow-100">{Math.round((item.stock / item.threshold) * 100)}%</span>
+              {lowStockItems.length === 0 ? (
+                <p className="text-center text-slate-500 py-8">All products well stocked</p>
+              ) : (
+                lowStockItems.map((item) => (
+                  <div key={item.id} className="p-3 bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 border border-yellow-200/50 dark:border-yellow-800/50 rounded-lg">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium text-slate-900 dark:text-white">{item.name}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                          {item.stock} left (threshold: {item.threshold})
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center bg-gradient-to-br from-yellow-200 to-amber-200 dark:from-yellow-800 dark:to-amber-800 shadow-inner">
+                          <span className="text-sm font-bold text-yellow-900 dark:text-yellow-100">{Math.round((item.stock / item.threshold) * 100)}%</span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
         </motion.div>

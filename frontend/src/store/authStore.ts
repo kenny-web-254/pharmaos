@@ -28,10 +28,14 @@ export const useAuthStore = create<AuthStore>((set) => ({
     if (user.organization) {
       localStorage.setItem('organization', JSON.stringify(user.organization));
     }
+    if (user.branch) {
+      localStorage.setItem('selectedBranch', JSON.stringify(user.branch));
+    }
     set({
       user,
       token,
       organization: user.organization || null,
+      selectedBranch: user.branch || null,
       isAuthenticated: true,
     });
   },

@@ -27,19 +27,23 @@ export const getOrganization = catchAsyncErrors(async (req, res, next) => {
 // Update Organization Settings
 export const updateOrganizationSettings = catchAsyncErrors(async (req, res, next) => {
   const { organizationId } = req.params;
-  const { settings, theme, modules } = req.body;
+  const { settings, theme, name, email, businessType, modules } = req.body;
 
   if (req.user.organization._id.toString() !== organizationId) {
     return next(new AppError('Unauthorized', 403));
   }
 
+  const updateData = {};
+  if (settings) updateData.settings = settings;
+  if (theme) updateData.theme = theme;
+  if (modules) updateData.modules = modules;
+  if (name) updateData.name = name;
+  if (email) updateData.email = email;
+  if (businessType) updateData.businessType = businessType;
+
   const organization = await Organization.findByIdAndUpdate(
     organizationId,
-    {
-      ...(settings && { settings }),
-      ...(theme && { theme }),
-      ...(modules && { modules }),
-    },
+    updateData,
     { new: true }
   );
 

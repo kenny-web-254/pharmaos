@@ -5,11 +5,15 @@ import Card from '../components/Card';
 import Button from '../components/Button';
 import { useAuthStore } from '../store/authStore';
 import { Notification } from '../types/index';
+import formatCurrency from '../services/currencyService';
+import { useCurrency } from '../hooks/useAuth';
 
 const NotificationsPage = () => {
   const { organization } = useAuthStore();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  const { currency } = useCurrency();
 
   useEffect(() => {
     const mockNotifications: Notification[] = [
@@ -25,7 +29,7 @@ const NotificationsPage = () => {
       {
         _id: '2',
         title: 'New Sale',
-        message: 'A new sale of $250.50 was recorded',
+        message: `A new sale of ${formatCurrency(250.5, currency)} was recorded`,
         type: 'success',
         isRead: false,
         organization: organization?._id || '',

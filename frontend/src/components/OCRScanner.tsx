@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Camera, X, FileText, Scan, Loader } from 'lucide-react';
 import Button from './Button';
+import formatCurrency from '../services/currencyService';
+import { useCurrency } from '../hooks/useAuth';
 
 interface OCRResult {
   text: string;
@@ -48,14 +50,16 @@ const OCRScanner: React.FC<OCRScannerProps> = ({ onResult, onClose, mode = 'invo
     // Simulate OCR processing
     await new Promise(resolve => setTimeout(resolve, 2000));
     
+    const { currency } = useCurrency();
+
     // Mock OCR result based on mode
     const mockResults: Record<string, OCRResult> = {
       invoice: {
-        text: 'INVOICE #INV-2024-001\nABC Pharmaceuticals\nDate: 2024-01-15\nItem: Paracetamol 500mg\nQty: 100\nPrice: $250.00',
+        text: `INVOICE #INV-2024-001\nABC Pharmaceuticals\nDate: 2024-01-15\nItem: Paracetamol 500mg\nQty: 100\nPrice: ${formatCurrency(250, currency)}`,
         confidence: 92,
         fields: {
           productName: 'Paracetamol 500mg',
-          price: '$250.00',
+          price: formatCurrency(250, currency),
           quantity: '100',
         },
       },
@@ -68,20 +72,20 @@ const OCRScanner: React.FC<OCRScannerProps> = ({ onResult, onClose, mode = 'invo
         },
       },
       receipt: {
-        text: 'Receipt #12345\nTotal: $45.50\nItem 1: Ibuprofen $5.99\nItem 2: Vitamin C $7.99',
+        text: `Receipt #12345\nTotal: ${formatCurrency(45.5, currency)}\nItem 1: Ibuprofen ${formatCurrency(5.99, currency)}\nItem 2: Vitamin C ${formatCurrency(7.99, currency)}`,
         confidence: 87,
         fields: {
-          total: '$45.50',
+          total: formatCurrency(45.5, currency),
         },
       },
       label: {
-        text: 'PAR-500\nParacetamol 500mg\nBatch: B20240115\nExp: 01/2026\nPrice: $4.99',
+        text: `PAR-500\nParacetamol 500mg\nBatch: B20240115\nExp: 01/2026\nPrice: ${formatCurrency(4.99, currency)}`,
         confidence: 94,
         fields: {
           productName: 'Paracetamol 500mg',
           batchNumber: 'B20240115',
           expiryDate: '01/2026',
-          price: '$4.99',
+          price: formatCurrency(4.99, currency),
         },
       },
     };

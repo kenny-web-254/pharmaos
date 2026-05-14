@@ -22,7 +22,9 @@ const LoginPage = () => {
     try {
       const response = await authService.login(email, password);
       const { token, user } = response.data;
-      setAuth(user, token);
+      // Fetch full user details including branch
+      const userRes = await authService.getCurrentUser();
+      setAuth(userRes.data.user, token);
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');
