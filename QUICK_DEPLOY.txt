@@ -1,0 +1,77 @@
+# 🚀 DEPLOYMENT QUICK START
+
+## Your Deployment Credentials
+
+```
+MongoDB URI:
+mongodb+srv://kenrodgersutugi_db_user:pharmasystem@cluster0.kxqnw0u.mongodb.net/?appName=Cluster0
+
+JWT Secret:
+f0bcb90d385894a0a6e3f116cbdf4801d0f98a7304505f47a1fc3669ed260782
+
+MongoDB Password:
+pharmasystem
+```
+
+---
+
+## 📋 Two-Service Deployment
+
+### 1️⃣ BACKEND → RENDER (5 min)
+https://render.com/login
+
+1. Login with GitHub
+2. New Web Service
+3. Select: kenny-web-254/pharmaos
+4. Name: `pharmaos-backend`
+5. Build: `cd backend && npm install`
+6. Start: `cd backend && npm start`
+7. Add environment variables (see DEPLOY_NOW.md)
+8. Deploy → Get URL
+
+### 2️⃣ FRONTEND → VERCEL (3 min)
+https://vercel.com/login
+
+1. Login with GitHub
+2. Import Project
+3. Select: kenny-web-254/pharmaos
+4. Root: `./frontend`
+5. Add VITE_API_URL = your Render URL
+6. Deploy → Get URL
+
+### 3️⃣ TEST YOUR APP (1 min)
+Your Vercel URL
+- Login: demo@nexacore.com / demo123456
+- Test all pages
+- Create new account
+
+---
+
+## ⏱️ Total Time: ~10 minutes
+
+**Total Effort: Copy/paste environment variables + Click Deploy**
+
+---
+
+## 📖 Detailed Guide
+
+Full step-by-step walkthrough: **DEPLOY_NOW.md**
+
+---
+
+## ✅ Deployment Complete When:
+
+- ✅ Render shows green checkmark
+- ✅ Vercel shows "Congratulations! Deployed"
+- ✅ Can login to app
+- ✅ All pages load
+- ✅ API calls work
+
+---
+
+## 🎉 You're Live!
+
+Homepage: https://pharmaos.vercel.app
+API: https://pharmaos-backend.onrender.com
+
+Share with your team! 🚀
