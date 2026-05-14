@@ -1,6 +1,6 @@
 import React from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
-import { useAuthStore } from '../../store/authStore';
+import useAuthStore from "../../store/authStore";
 import Sidebar from './Sidebar';
 import Header from './Header';
 

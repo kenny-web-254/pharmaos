@@ -77,3 +77,6 @@ export const useAuthStore = create<AuthStore>((set) => ({
     }
   },
 }));
+
+// Provide a default export so files using default imports work as expected
+export default useAuthStore;
