@@ -115,8 +115,9 @@ const Sidebar = ({ mobileOpen, setMobileOpen }: { mobileOpen?: boolean; setMobil
           <LogOut className="w-5 h-5" />
           {isOpen && <span>Logout</span>}
         </button>
-      </div>
-    </motion.aside>
+        </div>
+      </motion.aside>
+    </>
   );
 };
 

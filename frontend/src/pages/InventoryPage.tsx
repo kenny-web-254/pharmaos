@@ -158,72 +158,74 @@ const InventoryPage = () => {
                   <th className="text-center py-4 px-4 font-semibold text-slate-900 dark:text-white">Actions</th>
                 </tr>
               </thead>
-               <tbody>
-                 {filteredProducts.map((product) => {
-                   const isLowStock = product.quantity <= product.minStockLevel;
-                   return (
-                     <motion.tr
-                       key={product._id}
-                       whileHover={{ backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
-                       className="border-b border-white/20 dark:border-slate-700/30"
-                     >
-                       <td className="py-4 px-4">
-                         <div className="flex items-center gap-3">
-                           <div className="w-11 h-11 bg-gradient-emerald rounded-xl flex items-center justify-center shadow-md">
-                             <Package className="text-white w-5 h-5" />
-                           </div>
-                           <div>
-                             <p className="font-semibold text-slate-900 dark:text-white">{product.name}</p>
-                             {isLowStock && (
-                               <div className="flex items-center gap-1 mt-1">
-                                 <AlertTriangle className="w-3 h-3 text-yellow-600" />
-                                 <span className="text-yellow-600 text-xs font-medium">Low Stock</span>
-                               </div>
-                             )}
-                           </div>
-                         </div>
-                       </td>
-                       <td className="py-4 px-4 text-slate-600 dark:text-slate-400 font-mono text-sm">{product.sku}</td>
-                       <td className="py-4 px-4 text-center">
-                         <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${
-                           isLowStock
-                             ? 'bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 text-yellow-700 dark:text-yellow-300'
-                             : 'bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300'
-                         }`}>
-                           {product.quantity}
-                         </span>
-                       </td>
-                    <td className="py-4 px-4 text-center text-slate-600 dark:text-slate-400">{product.minStockLevel}</td>
-                    <td className="py-4 px-4 text-right text-slate-900 dark:text-white text-sm">{formatCurrency(product.buyingPrice, currency)}</td>
-                    <td className="py-4 px-4 text-right text-slate-900 dark:text-white font-bold text-sm">{formatCurrency(product.sellingPrice, currency)}</td>
-                    <td className="py-4 px-4 text-right text-emerald-600 font-bold">{product.margin}%</td>
-                    <td className="py-4 px-4 text-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          onClick={() => toast('QR code feature coming soon!', { icon: '📱' })}
-                          className="p-2 glass rounded-lg hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
-                          title="Scan QR"
-                        >
-                          <QrCode className="w-4 h-4 text-emerald-600" />
-                        </button>
-                        <button
-                          onClick={() => handleEditProduct(product as any)}
-                          className="p-2 glass rounded-lg hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
-                          title="Edit product"
-                        >
-                          <Edit className="w-4 h-4 text-slate-600" />
-                        </button>
-                        <button
-                          onClick={() => handleDeleteProduct(product._id)}
-                          className="p-2 glass rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
-                          title="Delete product"
-                        >
-                          <Trash2 className="w-4 h-4 text-red-600" />
-                        </button>
-                      </div>
-                    </td>
-                 ))}
-               </tbody>
+                <tbody>
+                  {filteredProducts.map((product) => {
+                    const isLowStock = product.quantity <= product.minStockLevel;
+                    return (
+                      <motion.tr
+                        key={product._id}
+                        whileHover={{ backgroundColor: 'rgba(16, 185, 129, 0.05)' }}
+                        className="border-b border-white/20 dark:border-slate-700/30"
+                      >
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-11 h-11 bg-gradient-emerald rounded-xl flex items-center justify-center shadow-md">
+                              <Package className="text-white w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-900 dark:text-white">{product.name}</p>
+                              {isLowStock && (
+                                <div className="flex items-center gap-1 mt-1">
+                                  <AlertTriangle className="w-3 h-3 text-yellow-600" />
+                                  <span className="text-yellow-600 text-xs font-medium">Low Stock</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </td>
+                        <td className="py-4 px-4 text-slate-600 dark:text-slate-400 font-mono text-sm">{product.sku}</td>
+                        <td className="py-4 px-4 text-center">
+                          <span className={`px-3 py-1.5 rounded-full text-sm font-bold ${
+                            isLowStock
+                              ? 'bg-gradient-to-r from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 text-yellow-700 dark:text-yellow-300'
+                              : 'bg-gradient-to-r from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30 text-emerald-700 dark:text-emerald-300'
+                          }`}>
+                            {product.quantity}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-center text-slate-600 dark:text-slate-400">{product.minStockLevel}</td>
+                        <td className="py-4 px-4 text-right text-slate-900 dark:text-white text-sm">{formatCurrency(product.buyingPrice, currency)}</td>
+                        <td className="py-4 px-4 text-right text-slate-900 dark:text-white font-bold text-sm">{formatCurrency(product.sellingPrice, currency)}</td>
+                        <td className="py-4 px-4 text-right text-emerald-600 font-bold">{product.margin}%</td>
+                        <td className="py-4 px-4 text-center">
+                          <div className="flex justify-center gap-2">
+                            <button
+                              onClick={() => toast('QR code feature coming soon!', { icon: '📱' })}
+                              className="p-2 glass rounded-lg hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
+                              title="Scan QR"
+                            >
+                              <QrCode className="w-4 h-4 text-emerald-600" />
+                            </button>
+                            <button
+                              onClick={() => handleEditProduct(product as any)}
+                              className="p-2 glass rounded-lg hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all"
+                              title="Edit product"
+                            >
+                              <Edit className="w-4 h-4 text-slate-600" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteProduct(product._id)}
+                              className="p-2 glass rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-all"
+                              title="Delete product"
+                            >
+                              <Trash2 className="w-4 h-4 text-red-600" />
+                            </button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </tbody>
             </table>
           </div>
         </Card>

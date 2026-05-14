@@ -19,23 +19,6 @@ const POSPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showScanner, setShowScanner] = useState(false);
   const [processingSale, setProcessingSale] = useState(false);
-  const [scannedProduct, setScannedProduct] = useState<any | null>(null);
-
-  const handleBarcodeScan = () => {
-    setShowScanner(true);
-  };
-
-  const handleScanSuccess = (decodedText: string) => {
-    setShowScanner(false);
-    // Search for product by barcode or SKU in the products list
-    const product = products.find(p => p._id === decodedText || p.sku === decodedText);
-    if (product) {
-      addToCart(product as any, 1);
-      toast.success(`Added ${product.name} to cart`);
-    } else {
-      toast.error('Product not found');
-    }
-  };
 
   const products = [
     { _id: '1', name: 'Ibuprofen 200mg', sellingPrice: 779, category: 'medicines', quantity: 100 },
@@ -300,9 +283,8 @@ const POSPage = () => {
           </div>
         </Card>
       </motion.div>
-    </div>
-  );
-};
+     </div>
+   );
 };
 
 export default POSPage;
