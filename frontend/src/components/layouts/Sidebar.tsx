@@ -15,7 +15,7 @@ import {
   FileText,
   Bell,
 } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '../../store/authStore';
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);

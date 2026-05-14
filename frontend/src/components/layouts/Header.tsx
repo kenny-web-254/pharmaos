@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, Settings, Search, User, ChevronDown, LogOut } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-import Button from '../components/Button';
+import { useAuthStore } from '../../store/authStore';
+import Button from '../Button';
 
 const Header = () => {
   const { user, logout } = useAuthStore();
